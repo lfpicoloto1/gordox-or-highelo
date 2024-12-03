@@ -1,9 +1,12 @@
 from fastapi import FastAPI
-from api.database import engine, Base
+from api.database import engine, Base, create_tables
 from api.routes import router
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+create_tables()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Atualize para origens específicas em produção
