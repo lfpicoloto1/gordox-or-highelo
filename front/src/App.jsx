@@ -6,10 +6,10 @@ import Header from "./components/Header";
 
 const App = () => (
   <Router>
-    <Header />
+    {/* <Header /> */}
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/game" element={<Game />} />
+      <Route path="/" element={<Game />} />
+      {/* <Route path="/game" element={<Game />} /> */}
     </Routes>
   </Router>
 );

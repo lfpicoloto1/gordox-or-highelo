@@ -1,0 +1,186 @@
+/* Tema Escuro */
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    background-color: #121212;
+    color: #ffffff;
+    min-height: 100vh;
+  }
+  
+  .game-title {
+    font-size: 2.5rem;
+    color: #ffffff;
+    margin-bottom: 10px;
+  }
+  
+  .game-subtitle {
+    font-size: 1.5rem;
+    color: #bbbbbb;
+    margin-bottom: 20px;
+  }
+  
+  .video-container {
+    margin-bottom: 20px;
+    max-width: 100%;
+  }
+  
+  .button-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap; /* Para ajustar os botões em telas menores */
+    justify-content: center;
+  }
+  
+  .choice-button {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .choice-button:hover {
+    transform: scale(1.05);
+  }
+  
+  .gordox-button {
+    background-color: #50a302;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+  }
+  
+  .gordox-button:hover {
+    background-color: #ff4500;
+  }
+  
+  .high-elo-button {
+    background-color: #4682b4;
+    color: #ffffff;
+  }
+  
+  .high-elo-button:hover {
+    background-color: #1e90ff;
+  }
+  
+  .icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+  }
+  
+  .choice-message {
+    font-size: 1.5rem;
+    color: #ffffff;
+    margin-top: 20px;
+    background-color: #333;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  .feedback-message {
+    font-size: 1.5rem;
+    color: #ffffff;
+    margin-top: 20px;
+    background-color: #444;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    line-height: 1.5;
+    display: inline-block; /* Garante alinhamento correto com o botão */
+  }
+  
+  .feedback-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* Espaço entre a mensagem e o botão */
+    margin-top: 20px;
+  }
+  
+  .audio-icon {
+    width: 120px; /* Ajuste o tamanho conforme necessário */
+    height: 100px; /* Ajuste o tamanho conforme necessário */
+    border-radius: 10%; /* Torna a imagem circular */
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 2px solid #ffffff; /* Adiciona uma borda */
+    background-color: #333; /* Caso a imagem tenha transparência */
+  }
+  
+  .audio-icon:hover {
+    transform: scale(1.1); /* Efeito de zoom ao passar o mouse */
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.4); /* Adiciona um destaque */
+  }
+  
+  .title-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .title-image {
+    width: 50px;
+    height: 50px;
+  }
+  
+  /* Responsividade */
+  @media (max-width: 768px) {
+    .game-title {
+      font-size: 2rem;
+    }
+  
+    .game-subtitle {
+      font-size: 1.2rem;
+    }
+  
+    .choice-button {
+      padding: 10px 20px;
+      font-size: 1rem;
+    }
+  
+    .audio-icon {
+      width: 40px;
+      height: 40px;
+    }
+  
+    .title-image {
+      width: 40px;
+      height: 40px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .game-title {
+      font-size: 1.8rem;
+    }
+  
+    .game-subtitle {
+      font-size: 1rem;
+    }
+  
+    .choice-button {
+      padding: 8px 16px;
+      font-size: 0.9rem;
+    }
+  
+    .audio-icon {
+      width: 35px;
+      height: 35px;
+    }
+  
+    .title-image {
+      width: 35px;
+      height: 35px;
+    }
+  }
+  

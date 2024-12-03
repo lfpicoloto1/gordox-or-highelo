@@ -15,7 +15,7 @@ class Video(VideoBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 # Schema base para respostas
@@ -32,5 +32,5 @@ class Response(ResponseBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 

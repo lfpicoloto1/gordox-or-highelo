@@ -18,3 +18,13 @@ services:
       - "3001:3000"
     depends_on:
       - backend
+  
+  db:
+    image: postgres:15
+    container_name: gordox_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: gordox
+    ports:
+      - "5432:5432"

@@ -1,8 +1,20 @@
+/* Estilos Globais para Tema Dark */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-  }
+  background-color: #121212; /* Fundo escuro */
+  color: #ffffff; /* Texto claro */
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: #1e90ff; /* Links em azul claro */
+  text-decoration: none;
+}
+
+a:hover {
+  color: #63a4ff; /* Cor mais clara no hover */
+}
   
   header {
     background-color: #f8f9fa;
