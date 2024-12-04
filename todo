@@ -1,2 +1,4 @@
 [] add authenticaçao na API
 [] arrumar para renderizar video do youtube
+
+docker-compose --env-file .env up --build   
