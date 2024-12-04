@@ -21,7 +21,7 @@ services:
     depends_on:
       - backend
     environment:
-      - ENV=${ENV} 
+      - API_URL=${API_URL} 
       - REACT_APP_API_USERNAME=${REACT_APP_API_USERNAME}
       - REACT_APP_API_PASSWORD=${REACT_APP_API_PASSWORD}
   
@@ -29,8 +29,8 @@ services:
     image: postgres:15
     container_name: gordox_db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin123
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_DB: gordox
     ports:
       - "5432:5432"

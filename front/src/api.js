@@ -1,12 +1,6 @@
 import axios from "axios";
 
-const API_URL =
-  process.env.ENV === "production"
-    ? "https://api.gordoxouhighelo.com.br"
-    : "http://localhost:8000";
-
-
-// Credenciais do .env
+const API_URL = process.env.API_URL
 const USERNAME = process.env.REACT_APP_API_USERNAME;
 const PASSWORD = process.env.REACT_APP_API_PASSWORD;
 
