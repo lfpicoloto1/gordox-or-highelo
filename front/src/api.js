@@ -22,3 +22,10 @@ export const postResponse = async (response) => {
   const result = await apiClient.post("/responses/", response);
   return result.data;
 };
+
+export const getResponses = async () => {
+  console.log(API_URL)
+  console.log("Chamou get")
+  const response = await apiClient.get("/responses/");
+  return response.data;
+};
