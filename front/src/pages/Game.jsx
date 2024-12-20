@@ -1,23 +1,38 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import VideoPlayer from "../components/VideoPlayer";
-import { getVideos, postResponse } from "../api";
-import "../css/Game.css"; // Importar o CSS
+import { getVideos, postResponse, getResponses } from "../api";
+import "../css/Game.css";
+import { Pie } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Game = () => {
   const [video, setVideo] = useState(null);
-  const [userChoice, setUserChoice] = useState(null); // Armazena a escolha do usuário
-  const [feedbackMessage, setFeedbackMessage] = useState(""); // Mensagem de feedback
-  const [audioFile, setAudioFile] = useState(""); // Caminho do áudio
+  const [userChoice, setUserChoice] = useState(null);
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [feedbackColor, setFeedbackColor] = useState(""); // Nova variável para cor da mensagem
+  const [choiceMessage, setChoiceMessage] = useState("");
+  const [audioFile, setAudioFile] = useState("");
+  const [playerCount, setPlayerCount] = useState(0);
+  const [chartData, setChartData] = useState(null);
+  const feedbackRef = useRef(null);
 
   useEffect(() => {
-    // Busca o vídeo mais recente
     getVideos()
       .then((videos) => {
         if (videos.length > 0) {
           const latestVideo = videos[videos.length - 1];
           setVideo(latestVideo);
 
-          // Verifica se o usuário já fez uma escolha para este vídeo
+          fetchPlayerCount(latestVideo.id);
+          fetchChartData(latestVideo.id);
+
           const storedChoices = JSON.parse(localStorage.getItem("userChoices")) || {};
           if (storedChoices[latestVideo.id]) {
             setUserChoice(storedChoices[latestVideo.id]);
@@ -28,51 +43,83 @@ const Game = () => {
       .catch(console.error);
   }, []);
 
+  const fetchPlayerCount = (videoId) => {
+    getResponses()
+      .then((responses) => {
+        const count = responses.filter((response) => response.video_id === videoId).length;
+        setPlayerCount(count);
+      })
+      .catch((error) => console.error("Erro ao buscar contador:", error));
+  };
+
+  const fetchChartData = (videoId) => {
+    getResponses()
+      .then((responses) => {
+        const filteredResponses = responses.filter((response) => response.video_id === videoId);
+        const gordoxCount = filteredResponses.filter((response) => response.choice === "Gordox").length;
+        const highEloCount = filteredResponses.filter((response) => response.choice === "High Elo").length;
+
+        setChartData({
+          labels: ["Gordox", "High Elo"],
+          datasets: [
+            {
+              data: [gordoxCount, highEloCount],
+              backgroundColor: ["#50a302", "#4682b4"],
+            },
+          ],
+        });
+      })
+      .catch((error) => console.error("Erro ao buscar dados do gráfico:", error));
+  };
+
   const handleChoice = (choice) => {
     if (!video) return;
 
-    // Salva a escolha no estado
     setUserChoice(choice);
 
-    // Salva a escolha no Local Storage
     const storedChoices = JSON.parse(localStorage.getItem("userChoices")) || {};
     storedChoices[video.id] = choice;
     localStorage.setItem("userChoices", JSON.stringify(storedChoices));
 
-    // Gera a mensagem de feedback
     generateFeedback(video.is_gordox, choice);
 
-    // Envia a escolha para o back-end
     postResponse({ video_id: video.id, choice })
-      .then(() => console.log(`Escolha enviada: ${choice}`))
+      .then(() => {
+        fetchPlayerCount(video.id);
+        fetchChartData(video.id);
+        feedbackRef.current?.scrollIntoView({ behavior: "smooth" });
+      })
       .catch(() => alert("Erro ao registrar a escolha."));
   };
 
   const generateFeedback = (isGordox, choice) => {
-    let message = "";
+    let feedback = "";
+    let color = ""; // Cor associada à mensagem
+    let choiceText = `Você escolheu: ${choice}`;
     let audio = "";
 
     if (isGordox && choice === "Gordox") {
-      message = "PARABÉNS MEU CUZAS, isso é uma autêntica jogada do Gordox!";
+      feedback = "PARABÉNS MEU CUZAS, isso é uma autêntica jogada do Gordox!";
+      color = "#50a302";
       audio = "/audio/gordox-play.mp3";
     } else if (!isGordox && choice === "Gordox") {
-      message = "Ai meu cuzas, isso não foi Gordox, foi High Elo.";
+      feedback = "Ai meu cuzas, isso não foi Gordox, foi High Elo.";
+      color = "#ff4500";
       audio = "/audio/derrota.mp3";
     } else if (isGordox && choice === "High Elo") {
-      message = "Meu cuzas, errou rude, NT, isso foi UMA AUTÊNTICA GORDOX PLAY.";
+      feedback = "Meu cuzas, errou rude, NT, isso foi UMA AUTÊNTICA GORDOX PLAY.";
+      color = "#ff4500";
       audio = "/audio/rude-error.mp3";
     } else if (!isGordox && choice === "High Elo") {
-      message = "Infelizmente você tá certo meu cuzas, isso foi High Elo.";
+      feedback = "Infelizmente você tá certo meu cuzas, isso foi High Elo.";
+      color = "#50a302";
       audio = "/audio/high-elo.mp3";
     }
 
-    setFeedbackMessage(  <>
-      {message}
-      <br />
-      <br />
-      Você escolheu: {choice}.
-    </>);
-    setAudioFile(audio); // Define o arquivo de áudio apropriado
+    setFeedbackMessage(feedback);
+    setFeedbackColor(color);
+    setChoiceMessage(choiceText);
+    setAudioFile(audio);
   };
 
   const playAudio = () => {
@@ -81,6 +128,16 @@ const Game = () => {
     audio.play().catch((error) => {
       console.warn("Áudio não pôde ser reproduzido:", error.message);
     });
+  };
+
+  const shareOnWhatsApp = () => {
+    const url = `https://api.whatsapp.com/send?text=E%20ai%20meu%20cuzas,%20isso%20%C3%A9%20uma%20jogada%20Gordox%20ou%20High%20Elo https://gordoxouhighelo.com.br/?`;
+    window.open(url, "_blank");
+  };
+
+  const shareOnTwitter = () => {
+    const url = `https://twitter.com/intent/tweet?text=E%20ai%20meu%20cuzas,%20isso%20%C3%A9%20uma%20jogada%20Gordox%20ou%20High%20Elo https://gordoxouhighelo.com.br/?`;
+    window.open(url, "_blank");
   };
 
   if (!video) return <p>Carregando vídeo...</p>;
@@ -96,40 +153,57 @@ const Game = () => {
         />
       </div>
 
-      <h2 className="game-subtitle">Escolhe ai meu cuzassss</h2>
+      <div className="player-count-container">
+        <p className="player-count">
+          {playerCount} pessoa{playerCount > 1 ? "s" : ""} já jogaram!
+        </p>
+      </div>
+
+      <h2 className="game-subtitle">É muito simples, vc assiste a play e decide se é uma jogada Gordox ou High Elo</h2>
       <div className="video-container">
         <iframe
-          width="560"
-          height="315"
           src={video.url}
           title="YouTube video player"
-          frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         ></iframe>
       </div>
       <div className="button-container">
         {userChoice ? (
-          <>
-            <p className="feedback-message">{feedbackMessage}</p>
+          <div ref={feedbackRef} className="feedback-container">
+            <p
+              className="feedback-message"
+              style={{ color: feedbackColor }}
+            ><b>
+              {feedbackMessage}
+              </b>
+            </p>
+            <p className="choice-message">{choiceMessage}</p>
             <img
-              src="/images/cliqueaqui.gif" // Substitua pelo caminho da sua imagem
+              src="/images/cliqueaqui.gif"
               alt="Reproduzir Áudio"
               className="audio-icon"
               onClick={playAudio}
             />
-          </>
+            {chartData && (
+              <div className="chart-wrapper">
+                <div className="chart-container">
+                  <h3>Resultados:</h3>
+                  <Pie data={chartData} />
+                </div>
+              </div>
+            )}
+            <div className="share-buttons">
+              <button onClick={shareOnWhatsApp}>Compartilhar no WhatsApp</button>
+              <button onClick={shareOnTwitter}>Compartilhar no Twitter</button>
+            </div>
+          </div>
         ) : (
           <>
             <button
               className="choice-button gordox-button"
               onClick={() => handleChoice("Gordox")}
             >
-              <img
-                src="/images/emumu.png"
-                alt="Amumu"
-                className="icon"
-              />
               Gordox
             </button>
             <button
